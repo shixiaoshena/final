@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .banner{
+    position: relative;
+    height: 460px;
+}
+.banner .img-list li{
+    position: absolute;
+    opacity: 0;
+}
+.banner-wapper .banner a img{
+    width: 1226px;
+    height: 460px;
+    vertical-align: top;
+}
+.banner .img-list li:nth-child(1){
+    opacity: 1;
+}
+.pointer{
+    z-index: 2;
+    position: absolute;
+    right: 30px;
+    bottom: 20px;
+}
+.pointer a{
+    float: left;
+    width: 6px;
+    height: 6px;
+    border: 2px rgba(255, 255, 255, 0.4) solid;
+    box-sizing: content-box;
+    margin: 0 4px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+}
+.pointer a:hover,
+.pointer .active{
+    border-color:rgba(0, 0, 0, 0.4);
+    background-color: rgba(255, 255, 255, 0.4);
+}
+.prev-next a{
+    width: 41px;
+    height: 69px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    background-image: url(../img/icon-slides.png);
+}
+.prev-next .prev{
+    z-index: 2;
+    left: 234px;
+    background-position: -84px 50%;
+}
+.prev-next .prev:hover{
+    background-position: 0 0;
+}
+.prev-next .next{
+    z-index: 2;
+    right: 0;
+    background-position: -125px 50%;
+}
+.prev-next .next:hover{
+    background-position: -42px 50%;
+}
+
+    </style>
+</head>
+<body>
+    <div class="banner-wapper">
+        <div class="container">
+            <div class="banner">
+                <ul class="img-list">
+                    <li>
+                        <a href="#">
+                            <img src="./assets/轮播图1.png" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="./assets/轮播图2.webp" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="./assets/轮播图3.webp" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="./assets/轮播图4.webp" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <img src="./assets/轮播图1.png" alt="">
+                        </a>
+                    </li>
+                </ul>
+                <div class="pointer">
+                    <a href="javascript:;"></a>
+                    <a href="javascript:;"></a>
+                    <a href="javascript:;"></a>
+                    <a href="javascript:;"></a>
+                </div>
+                <div class="prev-next">
+                    <a class="prev" ></a>
+                    <a class="next" ></a>
+                </div>
+            </div>
+        </div>
+     </div>
+<script>
+    window.onload = function(){
+    var Oul = document.getElementsByClassName("img-list")[0];
+    var OliArray = Oul.getElementsByTagName("li");
+    var pointer = document.getElementsByClassName("pointer")[0];
+    var PointerArray = pointer.getElementsByTagName("a");
+    var nextBanner = document.getElementsByClassName("next")[0];
+    var prevBanner = document.getElementsByClassName("prev")[0];
+
+    var timer,autoTimer, next = 0,pre = OliArray.length-1;
+    PointerArray[0].className = "active";
+    
+    autoPlay();
+    for(let i=0;i<PointerArray.length;i++){
+        PointerArray[i].onclick = function(){
+            clearInterval(autoTimer);
+            for(let j=0;j<OliArray.length;j++){
+                if(j!=i){
+                    OliArray[j].style.zIndex = 0;
+                }
+                if(j!=next)
+                    OliArray[j].style.opacity = 0;
+                if(j!=OliArray.length-1){
+                    PointerArray[j].className = "";
+                }
+            }
+            OliArray[i].style.zIndex=1;
+            delayOpacity(OliArray[next],0,-0.1);
+            delayOpacity(OliArray[i],1,0.1);
+            PointerArray[i].className = "active";
+            pre = i - 1 == 0? OliArray.length-1:i-1;
+            next = i;
+            autoPlay();
+        }
+    }
+
+    nextBanner.onclick = function(){
+        clearInterval(autoTimer);
+        next++;
+        pre++;
+        next %= OliArray.length;
+        pre %= OliArray.length;
+        if(pre==OliArray.length-1){
+            pre = 0;
+        }
+        for(let i=0;i<OliArray.length;i++){
+            if(i!=next){
+                OliArray[i].style.zIndex = 0;
+            }
+            if(i!=pre)
+                OliArray[i].style.opacity = 0;
+            if(i!=OliArray.length-1){
+                PointerArray[i].className = "";
+            }
+        }
+        OliArray[next].style.zIndex = 1;
+        delayOpacity(OliArray[pre],0,-0.1);
+        delayOpacity(OliArray[next],1,0.1);
+        if(next==OliArray.length-1) {
+            next = 0;
+            OliArray[next].style.opacity = 1;
+        }
+        PointerArray[next].className = "active";
+        autoPlay();
+    }
+    prevBanner.onclick = function(){
+        clearInterval(autoTimer);
+        pre = next;
+        next = next-1>=0? next-1:OliArray.length-2;
+        for(let i=0;i<OliArray.length;i++){
+            if(i!=next){
+                OliArray[i].style.zIndex = 0;
+            }
+            if(i!=pre)
+                OliArray[i].style.opacity = 0;
+            if(i!=OliArray.length-1){
+                PointerArray[i].className = "";
+            }
+        }
+        OliArray[next].style.zIndex = 1;
+        delayOpacity(OliArray[pre],0,-0.1);
+        delayOpacity(OliArray[next],1,0.1);
+        if(next==OliArray.length-1) {
+            next = 0;
+            OliArray[next].style.opacity = 1;
+        }
+        PointerArray[next].className = "active";
+        pre = next - 1;
+        autoPlay();
+    }
+
+    function autoPlay(){
+        autoTimer = setInterval(function(){
+            next++;
+            pre++;
+            next %= OliArray.length;
+            pre %= OliArray.length;
+            if(pre==OliArray.length-1){
+                pre = 0;
+            }
+            for(let i=0;i<OliArray.length;i++){
+                if(i!=next){
+                    OliArray[i].style.zIndex = 0;
+                }
+                if(i!=pre)
+                    OliArray[i].style.opacity = 0;
+                if(i!=OliArray.length-1){
+                    PointerArray[i].className = "";
+                }
+            }
+            OliArray[next].style.zIndex=1;
+            delayOpacity(OliArray[pre],0,-0.1);
+            delayOpacity(OliArray[next],1,0.1);
+            if(next==OliArray.length-1) {
+                next = 0;
+                OliArray[next].style.opacity = 1;
+            }
+            PointerArray[next].className = "active";
+        },3000);
+    }
+    function delayOpacity(obj,target,speed){
+        clearInterval(timer);
+        timer = setInterval(function(){
+            var old = getComputedStyle(obj,null)['opacity'];
+            if(parseInt(speed)>0 && newVal>=target){
+                newVal = 1;
+            }
+            if(parseInt(speed)<0 && newVal<=target){
+                newVal = 0;
+            }
+            obj.style.opacity = newVal;
+            if(newVal==target){
+                clearInterval(timer);
+            }
+        },100);
+    }
+}
+
+</script>
+</body>
+</html>
